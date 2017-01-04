@@ -9,6 +9,14 @@
 #import <UIKit/UIKit.h>
 #import "TYTextContainer.h"
 
+
+/**
+ 文本对齐方式
+
+ - TYVerticalAlignmentTop: 顶部对齐
+ - TYVerticalAlignmentCenter: 中部对齐
+ - TYVerticalAlignmentBottom: 底部对齐
+ */
 typedef NS_ENUM(NSUInteger, TYVerticalAlignment) {
     TYVerticalAlignmentTop,
     TYVerticalAlignmentCenter,

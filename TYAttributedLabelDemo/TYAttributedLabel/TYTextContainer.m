@@ -13,6 +13,7 @@
 
 // this code quote TTTAttributedLabel
 static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstraints(CTFramesetterRef framesetter, NSAttributedString *attributedString, CGSize size, NSUInteger numberOfLines) {
+	
     CFRange rangeToSize = CFRangeMake(0, (CFIndex)[attributedString length]);
     CGSize constraints = CGSizeMake(size.width, MAXFLOAT);
     
@@ -58,8 +59,7 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 
 @implementation TYTextContainer
 
-- (instancetype)init
-{
+- (instancetype)init {
     if (self = [super init]) {
         [self setupProperty];
     }
@@ -85,8 +85,7 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     return [_attString copy];
 }
 
-- (NSAttributedString *)createAttributedString
-{
+- (NSAttributedString *)createAttributedString {
     [self addTextStoragesWithAtrributedString:_attString];
     if (_attString == nil) {
         _attString = [[NSMutableAttributedString alloc]init];
@@ -108,23 +107,24 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     _replaceStringNum = 0;
 }
 
-- (void)resetAllAttributed
-{
+/// 重置属性
+- (void)resetAllAttributed {
+	
     [self resetRectDictionary];
-    _textStorageArray = nil;
-    _textStorages = nil;
-    _replaceStringNum = 0;
+    _textStorageArray	= nil;
+    _textStorages		= nil;
+    _replaceStringNum	= 0;
 }
 
-- (void)resetRectDictionary
-{
+///
+- (void)resetRectDictionary {
     _drawRectDictionary = nil;
     _linkRectDictionary = nil;
-    _runRectDictionary = nil;
+    _runRectDictionary  = nil;
 }
 
-- (void)resetFrameRef
-{
+///
+- (void)resetFrameRef {
     if (_frameRef) {
         CFRelease(_frameRef);
         _frameRef = nil;
@@ -132,8 +132,9 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     _textHeight = 0;
 }
 
-- (void)setText:(NSString *)text
-{
+///
+- (void)setText:(NSString *)text {
+	///
     _attString = [self createTextAttibuteStringWithText:text];
     [self resetAllAttributed];
     [self resetFrameRef];
@@ -241,8 +242,9 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 }
 
 #pragma mark - create text attibuteString
-- (NSMutableAttributedString *)createTextAttibuteStringWithText:(NSString *)text
-{
+/// 创建属性字符串
+- (NSMutableAttributedString *)createTextAttibuteStringWithText:(NSString *)text {
+	
     if (text.length <= 0) {
         return [[NSMutableAttributedString alloc]init];
     }
@@ -258,9 +260,8 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     return attString;
 }
 
-// 添加文本颜色 字体属性
-- (void)addTextColorAndFontWithAtrributedString:(NSMutableAttributedString *)attString
-{
+/// 添加文本颜色 字体属性
+- (void)addTextColorAndFontWithAtrributedString:(NSMutableAttributedString *)attString {
     // 添加文本字体
     [attString addAttributeFont:_font];
     
@@ -271,37 +272,40 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     if (_strokeWidth > 0) {
         [attString addAttributeStrokeWidth:_strokeWidth strokeColor:_strokeColor];
     }
-    
 }
 
-// 添加文本段落样式
-- (void)addTextParaphStyleWithAtrributedString:(NSMutableAttributedString *)attString
-{
+/// 添加文本段落样式
+- (void)addTextParaphStyleWithAtrributedString:(NSMutableAttributedString *)attString {
     // 字体间距
-    if (_characterSpacing)
-    {
+    if (_characterSpacing) {
         [attString addAttributeCharacterSpacing:_characterSpacing];
     }
     
     // 添加文本段落样式
-    [self addAttributeAlignmentStyle:_textAlignment lineSpaceStyle:_linesSpacing paragraphSpaceStyle:_paragraphSpacing lineBreakStyle:_lineBreakMode];
+    [self addAttributeAlignmentStyle:_textAlignment 
+					  lineSpaceStyle:_linesSpacing 
+				 paragraphSpaceStyle:_paragraphSpacing 
+					  lineBreakStyle:_lineBreakMode];
 }
 
+/// 添加文本段落样式
 - (void)addAttributeAlignmentStyle:(CTTextAlignment)textAlignment
                     lineSpaceStyle:(CGFloat)linesSpacing
                paragraphSpaceStyle:(CGFloat)paragraphSpacing
-                    lineBreakStyle:(CTLineBreakMode)lineBreakMode
-{
-    if (lineBreakMode == kCTLineBreakByTruncatingTail)
-    {
+                    lineBreakStyle:(CTLineBreakMode)lineBreakMode {
+	
+    if (lineBreakMode == kCTLineBreakByTruncatingTail) {
         lineBreakMode = _numberOfLines == 1 ? kCTLineBreakByCharWrapping : kCTLineBreakByWordWrapping;
     }
-    [_attString addAttributeAlignmentStyle:_textAlignment lineSpaceStyle:_linesSpacing paragraphSpaceStyle:_paragraphSpacing lineBreakStyle:lineBreakMode];
+    [_attString addAttributeAlignmentStyle:_textAlignment 
+							lineSpaceStyle:_linesSpacing 
+					   paragraphSpaceStyle:_paragraphSpacing 
+							lineBreakStyle:lineBreakMode];
 }
 
 #pragma mark -  add text storage atrributed
-- (void)addTextStoragesWithAtrributedString:(NSMutableAttributedString *)attString
-{
+///
+- (void)addTextStoragesWithAtrributedString:(NSMutableAttributedString *)attString {
     if (attString && _textStorageArray.count > 0) {
         
         // 排序range
@@ -443,8 +447,10 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     _runRectDictionary = runRectDictionary;
 }
 
-- (CGSize)getSuggestedSizeWithFramesetter:(CTFramesetterRef)framesetter width:(CGFloat)width
-{
+///
+- (CGSize)getSuggestedSizeWithFramesetter:(CTFramesetterRef)framesetter
+									width:(CGFloat)width {
+
     if (_attString == nil || width <= 0) {
         return CGSizeZero;
     }
@@ -468,6 +474,7 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 
     return CGSizeMake(_isWidthToFit ? suggestedSize.width : width, suggestedSize.height+1);
 }
+
 - (CGFloat)getHeightWithFramesetter:(CTFramesetterRef)framesetter width:(CGFloat)width
 {
     return [self getSuggestedSizeWithFramesetter:framesetter width:width].height;
@@ -490,8 +497,9 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     return [self createTextContainerWithContentSize:CGSizeMake(textWidth, 0)];
 }
 
-- (instancetype)createTextContainerWithContentSize:(CGSize)contentSize
-{
+/// 根据尺寸创建内容
+- (instancetype)createTextContainerWithContentSize:(CGSize)contentSize {
+	
     if (_frameRef) {
         return self;
     }
@@ -501,11 +509,12 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     
     // 获得建议的size
     CGSize size = [self getSuggestedSizeWithFramesetter:framesetter width:contentSize.width];
-    _textWidth = size.width;
+    _textWidth  = size.width;
     _textHeight = size.height;
     
     // 创建CTFrameRef
-    _frameRef = [self createFrameRefWithFramesetter:framesetter textSize:CGSizeMake(_textWidth, contentSize.height > 0 ? contentSize.height : _textHeight)];
+    _frameRef = [self createFrameRefWithFramesetter:framesetter
+										   textSize:CGSizeMake(_textWidth, contentSize.height > 0 ? contentSize.height : _textHeight)];
     
     // 释放内存
     CFRelease(framesetter);

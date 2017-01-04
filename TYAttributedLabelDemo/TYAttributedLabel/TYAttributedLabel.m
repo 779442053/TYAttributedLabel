@@ -57,9 +57,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 @implementation TYAttributedLabel
 
 #pragma mark - init
-
-- (instancetype)initWithFrame:(CGRect)frame
-{
+- (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         [self setupProperty];
         _textContainer = [[TYTextContainer alloc]init];
@@ -67,8 +65,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
     return self;
 }
 
-- (instancetype)initWithCoder:(NSCoder *)aDecoder
-{
+- (instancetype)initWithCoder:(NSCoder *)aDecoder {
     if (self = [super initWithCoder:aDecoder]) {
         [self setupProperty];
         _textContainer = [[TYTextContainer alloc]init];
@@ -76,8 +73,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
     return self;
 }
 
-- (instancetype)initWithTextContainer:(TYTextContainer *)textContainer
-{
+- (instancetype)initWithTextContainer:(TYTextContainer *)textContainer {
     if (self = [super init]) {
         [self setupProperty];
         _textContainer = textContainer;
@@ -85,28 +81,30 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
     return self;
 }
 
-- (void)setupProperty
-{
+#pragma mark - setup
+/// 初始化属性
+- (void)setupProperty {
+	// 设置背景色
     if (self.backgroundColor == nil) {
         self.backgroundColor = [UIColor whiteColor];
     }
-    self.userInteractionEnabled = YES;
-    _highlightedLinkColor = nil;
+	// 设置可交互
+    self.userInteractionEnabled		 = YES;
+    _highlightedLinkColor			 = nil;
     _highlightedLinkBackgroundRadius = 2;
-    _highlightedLinkBackgroundColor = kSelectAreaColor;
+    _highlightedLinkBackgroundColor  = kSelectAreaColor;
 }
 
-- (void)setTextContainer:(TYTextContainer *)attStringCreater
-{
+- (void)setTextContainer:(TYTextContainer *)attStringCreater {
     _textContainer = attStringCreater;
     [self resetAllAttributed];
     _preferredMaxLayoutWidth = attStringCreater.textWidth;
     [self invalidateIntrinsicContentSize];
+	// 调用 drawRect
     [self setNeedsDisplay];
 }
-
-- (void)setDelegate:(id<TYAttributedLabelDelegate>)delegate
-{
+// 设置代理
+- (void)setDelegate:(id<TYAttributedLabelDelegate>)delegate {
     if (delegate == _delegate)  return;
     _delegate = delegate;
     
@@ -115,14 +113,12 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 }
 
 #pragma mark - add textStorage
-- (void)addTextStorage:(id<TYTextStorageProtocol>)textStorage
-{
+- (void)addTextStorage:(id<TYTextStorageProtocol>)textStorage {
     [_textContainer addTextStorage:textStorage];
     [self invalidateIntrinsicContentSize];
 }
 
-- (void)addTextStorageArray:(NSArray *)textStorageArray
-{
+- (void)addTextStorageArray:(NSArray *)textStorageArray {
     if (textStorageArray) {
         [_textContainer addTextStorageArray:textStorageArray];
         [self invalidateIntrinsicContentSize];
@@ -130,16 +126,14 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
     }
 }
 
-- (void)resetAllAttributed
-{
+- (void)resetAllAttributed {
     [self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [self removeSingleTapGesture];
     [self removeLongPressGesture];
 }
 
 #pragma mark reset framesetter
-- (void)resetFramesetter
-{
+- (void)resetFramesetter {
     [_textContainer resetRectDictionary];
     [_textContainer resetFrameRef];
     [self setNeedsDisplay];
@@ -147,11 +141,13 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 
 #pragma mark - drawRect
 - (void)drawRect:(CGRect)rect {
-    
+	
+	/// 资源判断
     if (_textContainer == nil ||  _textContainer.attString == nil) {
         return;
     }
-    
+	
+	/// 根据尺寸创建内容
     [_textContainer createTextContainerWithContentSize:self.bounds.size];
     
     // 文本垂直对齐方式位移
@@ -189,8 +185,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 - (void)drawText: (NSAttributedString *)attributedString
             frame:(CTFrameRef)frame
             rect: (CGRect)rect
-         context: (CGContextRef)context
-{
+         context: (CGContextRef)context {
     if (_textContainer.numberOfLines > 0)
     {
         CFArrayRef lines = CTFrameGetLines(frame);
@@ -260,8 +255,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 
 #pragma mark - drawTextStorage
 
-- (void)drawTextStorage
-{
+- (void)drawTextStorage {
     // draw storage
     [_textContainer enumerateDrawRectDictionaryUsingBlock:^(id<TYDrawStorageProtocol> drawStorage, CGRect rect) {
         if ([drawStorage conformsToProtocol:@protocol(TYViewStorageProtocol) ]) {
@@ -326,7 +320,6 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 }
 
 #pragma mark - Gesture action
-
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
     CGPoint point = [touch locationInView:self];
@@ -448,8 +441,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 }
 
 // 取消高亮
-- (void)resetHighLightLink
-{
+- (void)resetHighLightLink {
     if (_highlightedLinkColor) {
         if (_saveLinkColor) {
             [_textContainer.attString addAttributeTextColor:_saveLinkColor range:_clickLinkRange];
@@ -465,7 +457,10 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 
 #pragma mark - draw Rect
 // 绘画选择区域
-- (void)drawSelectionAreaFrame:(CTFrameRef)frameRef InRange:(NSRange)selectRange radius:(CGFloat)radius bgColor:(UIColor *)bgColor{
+- (void)drawSelectionAreaFrame:(CTFrameRef)frameRef
+					   InRange:(NSRange)selectRange 
+						radius:(CGFloat)radius 
+					   bgColor:(UIColor *)bgColor{
     
     NSInteger selectionStartPosition = selectRange.location;
     NSInteger selectionEndPosition = NSMaxRange(selectRange);
@@ -566,43 +561,36 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 }
 
 #pragma mark - get Right Height
-- (int)getHeightWithWidth:(CGFloat)width
-{
+- (int)getHeightWithWidth:(CGFloat)width {
     // 是否需要更新frame
     return [_textContainer getHeightWithFramesetter:nil width:width];
 }
 
-- (CGSize)getSizeWithWidth:(CGFloat)width
-{
+- (CGSize)getSizeWithWidth:(CGFloat)width {
     return [_textContainer getSuggestedSizeWithFramesetter:nil width:width];
 }
 
-- (void)sizeToFit
-{
+- (void)sizeToFit {
     [super sizeToFit];
 }
 
-- (CGSize)sizeThatFits:(CGSize)size
-{
+- (CGSize)sizeThatFits:(CGSize)size {
     return [self getSizeWithWidth:CGRectGetWidth(self.frame)];
 }
 
-- (void)setPreferredMaxLayoutWidth:(CGFloat)preferredMaxLayoutWidth
-{
+- (void)setPreferredMaxLayoutWidth:(CGFloat)preferredMaxLayoutWidth {
     if (_preferredMaxLayoutWidth != preferredMaxLayoutWidth) {
         _preferredMaxLayoutWidth = preferredMaxLayoutWidth;
         [self invalidateIntrinsicContentSize];
     }
 }
 
-- (CGSize)intrinsicContentSize
-{
+- (CGSize)intrinsicContentSize {
     return [self getSizeWithWidth:_preferredMaxLayoutWidth];
 }
 
 #pragma mark - set right frame
-- (void)setFrameWithOrign:(CGPoint)orign Width:(CGFloat)width
-{
+- (void)setFrameWithOrign:(CGPoint)orign Width:(CGFloat)width {
     // 获得高度
     int height = [self getHeightWithWidth:width];
     
@@ -610,8 +598,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
     [self setFrame:CGRectMake(orign.x, orign.y, width, height)];
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     _textContainer = nil;
 }
 
@@ -691,17 +678,19 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 }
 
 #pragma mark - setter
-
-- (void)setText:(NSString *)text
-{
+///
+- (void)setText:(NSString *)text {
+	
     [_textContainer setText:text];
+	// 删除手势
     [self resetAllAttributed];
+	
     [self invalidateIntrinsicContentSize];
+	
     [self setNeedsDisplay];
 }
 
-- (void)setAttributedText:(NSAttributedString *)attributedText
-{
+- (void)setAttributedText:(NSAttributedString *)attributedText {
     [_textContainer setAttributedText:attributedText];
     [self resetAllAttributed];
     [self invalidateIntrinsicContentSize];
