@@ -321,38 +321,54 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 }
 
 #pragma mark - Gesture action
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
-{
+///
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer 
+	   shouldReceiveTouch:(UITouch *)touch {
+	
     CGPoint point = [touch locationInView:self];
-    
-    return [_textContainer enumerateRunRectContainPoint:point viewHeight:CGRectGetHeight(self.frame) successBlock:nil];
+    return [_textContainer enumerateRunRectContainPoint:point 
+											 viewHeight:CGRectGetHeight(self.frame) 
+										   successBlock:nil];
 }
 
-- (void)singleTap:(UITapGestureRecognizer *)sender
-{
+/// 点击事件
+- (void)singleTap:(UITapGestureRecognizer *)sender {
+
     CGPoint point = [sender locationInView:self];
     
     __typeof (self) __weak weakSelf = self;
-    [_textContainer enumerateRunRectContainPoint:point viewHeight:CGRectGetHeight(self.frame) successBlock:^(id<TYTextStorageProtocol> textStorage){
+    [_textContainer enumerateRunRectContainPoint:point 
+									  viewHeight:CGRectGetHeight(self.frame) 
+									successBlock:^(id<TYTextStorageProtocol> textStorage){
+
         if (_delegateFlags.textStorageClickedAtPoint) {
-            [_delegate attributedLabel:weakSelf textStorageClicked:textStorage atPoint:point];
+            [_delegate attributedLabel:weakSelf 
+					textStorageClicked:textStorage 
+							   atPoint:point];
         }
     }];
 }
 
-- (void)longPress:(UILongPressGestureRecognizer *)sender
-{
+/// 长按事件
+- (void)longPress:(UILongPressGestureRecognizer *)sender {
+	
     CGPoint point = [sender locationInView:self];
-    
+
     __typeof (self) __weak weakSelf = self;
-    [_textContainer enumerateRunRectContainPoint:point viewHeight:CGRectGetHeight(self.frame) successBlock:^(id<TYTextStorageProtocol> textStorage){
+    [_textContainer enumerateRunRectContainPoint:point 
+									  viewHeight:CGRectGetHeight(self.frame) 
+									successBlock:^(id<TYTextStorageProtocol> textStorage){
         if (_delegateFlags.textStorageLongPressedOnStateAtPoint) {
-                [weakSelf.delegate attributedLabel:weakSelf textStorageLongPressed:textStorage onState:sender.state atPoint:point];
+                [weakSelf.delegate attributedLabel:weakSelf 
+							textStorageLongPressed:textStorage 
+										   onState:sender.state 
+										   atPoint:point];
         }
     }];
 }
 
 #pragma mark - touches action
+///
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     __block BOOL found = NO;
     if ([_textContainer existLinkRectDictionary]) {
