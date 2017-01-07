@@ -18,7 +18,7 @@
 @property (nonatomic, strong)   UIColor     *textColor;     // 文本颜色
 @property (nonatomic, strong)   UIFont      *font;          // 字体
 
-@property (nonatomic, assign)   CTUnderlineStyle underLineStyle;// 下划线样式（单 双）（默认没有）
-@property (nonatomic, assign)   CTUnderlineStyleModifiers modifier;// 下划线样式 （点 线）（默认线）
+@property (nonatomic, assign)   CTUnderlineStyle underLineStyle;	// 下划线样式（单 双）（默认没有）
+@property (nonatomic, assign)   CTUnderlineStyleModifiers modifier;	// 下划线样式 （点 线）（默认线）
 
 @end

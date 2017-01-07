@@ -12,7 +12,6 @@
 @interface TYDrawStorage (){
     CGFloat         _fontAscent;
     CGFloat         _fontDescent;
-    
     NSRange         _fixRange;
 }
 @end
@@ -21,19 +20,16 @@
 
 #pragma mark - protocol
 
-- (void)currentReplacedStringNum:(NSInteger)replacedStringNum
-{
+- (void)currentReplacedStringNum:(NSInteger)replacedStringNum {
     _fixRange = [self fixRange:_range replaceStringNum:replacedStringNum];
 }
 
-- (void)setTextfontAscent:(CGFloat)ascent descent:(CGFloat)descent;
-{
+- (void)setTextfontAscent:(CGFloat)ascent descent:(CGFloat)descent; {
     _fontAscent = ascent;
     _fontDescent = -descent;
 }
 
-- (void)addTextStorageWithAttributedString:(NSMutableAttributedString *)attributedString
-{
+- (void)addTextStorageWithAttributedString:(NSMutableAttributedString *)attributedString {
     NSRange range = _fixRange;
     if (range.location == NSNotFound) {
         return;
@@ -52,8 +48,7 @@
     [self addRunDelegateWithAttributedString:attributedString range:range];
 }
 
-- (NSAttributedString *)appendTextStorageAttributedString
-{
+- (NSAttributedString *)appendTextStorageAttributedString {
     // 创建空字符属性文本
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc]initWithString:[self spaceReplaceString]];
     // 修正range
@@ -67,24 +62,20 @@
     return attributedString;
 }
 
-- (void)drawStorageWithRect:(CGRect)rect
-{
+- (void)drawStorageWithRect:(CGRect)rect {
     
 }
 
 #pragma mark - public
-
-- (CGFloat)getDrawRunAscentHeight
-{
+/// 获取绘制高度
+- (CGFloat)getDrawRunAscentHeight {
     CGFloat ascent = 0;
-    CGFloat height = self.size.height+_margin.bottom+_margin.top;
-    switch (_drawAlignment)
-    {
+    CGFloat height = self.size.height+_margin.bottom + _margin.top;
+    switch (_drawAlignment) {
         case TYDrawAlignmentTop:
             ascent = height - _fontDescent;
             break;
-        case TYDrawAlignmentCenter:
-        {
+        case TYDrawAlignmentCenter: {
             CGFloat baseLine = (_fontAscent + _fontDescent) / 2 - _fontDescent;
             ascent = height / 2 + baseLine;
             break;
@@ -98,13 +89,11 @@
     return ascent;
 }
 
-- (CGFloat)getDrawRunWidth
-{
+- (CGFloat)getDrawRunWidth {
     return self.size.width+_margin.left+_margin.right;
 }
 
-- (CGFloat)getDrawRunDescentHeight
-{
+- (CGFloat)getDrawRunDescentHeight {
     CGFloat descent = 0;
     CGFloat height = self.size.height+_margin.bottom+_margin.top;
     switch (_drawAlignment)
@@ -128,31 +117,26 @@
     return descent;
 }
 
-- (void)DrawRunDealloc
-{
+- (void)DrawRunDealloc {
     
 }
 
 #pragma mark - private
-
-- (NSString *)spaceReplaceString
-{
+- (NSString *)spaceReplaceString {
     // 替换字符
     unichar objectReplacementChar           = 0xFFFC;
     NSString *objectReplacementString       = [NSString stringWithCharacters:&objectReplacementChar length:1];
     return objectReplacementString;
 }
 
-- (void)setAppropriateAlignment
-{
+- (void)setAppropriateAlignment {
     // 判断size 大小 小于 _fontAscent 把对齐设为中心 更美观
     if (_size.height <= _fontAscent + _fontDescent) {
         _drawAlignment = TYDrawAlignmentCenter;
     }
 }
 
-- (NSRange)fixRange:(NSRange)range replaceStringNum:(NSInteger)replaceStringNum
-{
+- (NSRange)fixRange:(NSRange)range replaceStringNum:(NSInteger)replaceStringNum {
     NSRange fixRange = range;
     if (range.length <= 1 || replaceStringNum < 0)
         return fixRange;
@@ -171,8 +155,7 @@
 }
 
 // 添加文本属性和runDelegate
-- (void)addRunDelegateWithAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range
-{
+- (void)addRunDelegateWithAttributedString:(NSMutableAttributedString *)attributedString range:(NSRange)range {
     // 添加文本属性和runDelegate
     [attributedString addAttribute:kTYTextRunAttributedName value:self range:range];
     
@@ -190,7 +173,7 @@
 }
 
 //CTRun的回调，销毁内存的回调
-void TYTextRunDelegateDeallocCallback( void* refCon ){
+void TYTextRunDelegateDeallocCallback( void* refCon ) {
     //TYDrawRun *textRun = (__bridge TYDrawRun *)refCon;
     //[textRun DrawRunDealloc];
 }

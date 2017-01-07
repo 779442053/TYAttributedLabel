@@ -10,12 +10,17 @@
 
 @interface TYDrawStorage : NSObject<TYDrawStorageProtocol>
 
-@property (nonatomic, assign)   NSInteger       tag;            // 标识
-@property (nonatomic, assign)   NSRange         range;          // 文本范围
+/// 标识
+@property (nonatomic, assign)   NSInteger       tag;
+/// 文本范围
+@property (nonatomic, assign)   NSRange         range;
 @property (nonatomic, assign)   NSRange         realRange;
-@property (nonatomic, assign)   UIEdgeInsets    margin;         // 图片四周间距
-@property (nonatomic, assign)   CGSize          size;           // 绘画物大小
-@property (nonatomic, assign)   TYDrawAlignment drawAlignment;  // 对齐方式
+/// 图片四周间距
+@property (nonatomic, assign)   UIEdgeInsets    margin;
+/// 绘画物大小
+@property (nonatomic, assign)   CGSize          size;
+/// 对齐方式
+@property (nonatomic, assign)   TYDrawAlignment drawAlignment;
 
 /**
  *  获取绘画区域上行高度(默认实现)

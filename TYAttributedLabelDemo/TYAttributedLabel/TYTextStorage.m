@@ -13,8 +13,7 @@
 
 #pragma mark - protocol
 
-- (void)addTextStorageWithAttributedString:(NSMutableAttributedString *)attributedString
-{
+- (void)addTextStorageWithAttributedString:(NSMutableAttributedString *)attributedString {
     
     // 颜色
     if (_textColor) {
@@ -24,17 +23,15 @@
     if (_font) {
         [attributedString addAttributeFont:_font range:_range];
     }
-    
     // 下划线
     if (_underLineStyle) {
         [attributedString addAttributeUnderlineStyle:_underLineStyle modifier:_modifier range:_range];
     }
 }
 
-- (NSAttributedString *)appendTextStorageAttributedString
-{
+- (NSAttributedString *)appendTextStorageAttributedString {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc]initWithString:_text];
-    
+
     // 验证范围
     if (NSEqualRanges(_range, NSMakeRange(0, 0))) {
         _range = NSMakeRange(0, attributedString.length);

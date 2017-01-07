@@ -82,6 +82,7 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     return [_attString copy];
 }
 
+/// 获取属性字符串
 - (NSAttributedString *)createAttributedString {
     [self addTextStoragesWithAtrributedString:_attString];
     if (_attString == nil) {
@@ -430,8 +431,7 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     }
     _runRectDictionary = runRectDictionary;
 }
-
-///
+/// 获取文本的size
 - (CGSize)getSuggestedSizeWithFramesetter:(CTFramesetterRef)framesetter
 									width:(CGFloat)width {
 
@@ -458,14 +458,13 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 
     return CGSizeMake(_isWidthToFit ? suggestedSize.width : width, suggestedSize.height+1);
 }
-
-- (CGFloat)getHeightWithFramesetter:(CTFramesetterRef)framesetter width:(CGFloat)width
-{
+/// 获取文本高度
+- (CGFloat)getHeightWithFramesetter:(CTFramesetterRef)framesetter width:(CGFloat)width {
     return [self getSuggestedSizeWithFramesetter:framesetter width:width].height;
 }
 
--  (CTFrameRef)createFrameRefWithFramesetter:(CTFramesetterRef)framesetter textSize:(CGSize)textSize
-{
+/// 创建CTFrameRef
+- (CTFrameRef)createFrameRefWithFramesetter:(CTFramesetterRef)framesetter textSize:(CGSize)textSize {
     // 这里你需要创建一个用于绘制文本的路径区域,通过 self.bounds 使用整个视图矩形区域创建 CGPath 引用。
     CGMutablePathRef path = CGPathCreateMutable();
     CGFloat textHeight = [self getHeightWithFramesetter:framesetter width:textSize.width];
@@ -476,8 +475,8 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     return frameRef;
 }
 
-- (instancetype)createTextContainerWithTextWidth:(CGFloat)textWidth
-{
+/// 使用 宽度 创建 文本容器textContainer
+- (instancetype)createTextContainerWithTextWidth:(CGFloat)textWidth {
     return [self createTextContainerWithContentSize:CGSizeMake(textWidth, 0)];
 }
 
@@ -584,7 +583,7 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 
 #pragma mark - add textStorage
 @implementation TYTextContainer (Add)
-
+/// 
 - (void)addTextStorage:(id<TYTextStorageProtocol>)textStorage {
     if (textStorage) {
         [self.textStorageArray addObject:textStorage];

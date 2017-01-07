@@ -10,24 +10,22 @@
 #import "TYImageCache.h"
 
 @interface TYImageStorage ()
+
 @property (nonatomic, weak) UIView *ownerView;
 @property (nonatomic, assign) BOOL isNeedUpdateFrame;
 @end
 
 @implementation TYImageStorage
 
-- (instancetype)init
-{
-    if (self = [super init]) {
-        _cacheImageOnMemory = NO;
-    }
+- (instancetype)init {
+	self = [super init];
+	_cacheImageOnMemory = NO;
     return self;
 }
 
 #pragma mark - protocol
 
-- (void)setOwnerView:(UIView *)ownerView
-{
+- (void)setOwnerView:(UIView *)ownerView {
     _ownerView = ownerView;
     
     if (!ownerView || !_imageURL) {
@@ -49,8 +47,7 @@
     }
 }
 
-- (void)drawStorageWithRect:(CGRect)rect
-{
+- (void)drawStorageWithRect:(CGRect)rect {
     __block UIImage *image = nil;
     if (_image) {
         // 本地图片名
@@ -85,14 +82,14 @@
     if (_imageAlignment == TYImageAlignmentFill) {
         return byRect;
     }
-    CGRect scaleRect = byRect;
-    CGFloat targetWidth = byRect.size.width;
-    CGFloat targetHeight = byRect.size.height;
-    CGFloat widthFactor = targetWidth / size.width;
-    CGFloat heightFactor = targetHeight / size.height;
-    CGFloat scaleFactor = MIN(widthFactor, heightFactor);
-    CGFloat scaledWidth  = size.width * scaleFactor;
-    CGFloat scaledHeight = size.height * scaleFactor;
+    CGRect scaleRect		= byRect;
+    CGFloat targetWidth		= byRect.size.width;
+    CGFloat targetHeight	= byRect.size.height;
+    CGFloat widthFactor		= targetWidth / size.width;
+    CGFloat heightFactor	= targetHeight / size.height;
+    CGFloat scaleFactor		= MIN(widthFactor, heightFactor);
+    CGFloat scaledWidth		= size.width * scaleFactor;
+    CGFloat scaledHeight	= size.height * scaleFactor;
     scaleRect.size = CGSizeMake(scaledWidth, scaledHeight);
     // center the image
     if (widthFactor < heightFactor) {
@@ -112,9 +109,15 @@
 }
 
 // override
-- (void)didNotDrawRun
-{
+- (void)didNotDrawRun {
     
 }
 
 @end
+
+
+
+
+
+
+

@@ -68,6 +68,8 @@
 
 @end
 
+
+
 @interface TYTextContainer (Add)
 /**
  *  添加 textStorage （自定义显示内容）
@@ -85,6 +87,7 @@
 
 @end
 
+
 #pragma mark - append
 @interface TYTextContainer (Append)
 
@@ -100,7 +103,7 @@
  *
  *  @param attributedText 属性文本
  */
-- (void)appendTextAttributedString: (NSAttributedString *)attributedText;
+- (void)appendTextAttributedString:(NSAttributedString *)attributedText;
 
 /**
  *  追加(添加到最后) textStorage （自定义显示内容）
@@ -117,6 +120,7 @@
 - (void)appendTextStorageArray:(NSArray *)textStorageArray;
 
 @end
+
 
 #pragma mark - Link
 @interface TYTextContainer (Link)
@@ -139,17 +143,25 @@
  *  @param underLineStyle   下划线样式（无，单 双) 默认单
  *  @param range            范围
  */
-- (void)addLinkWithLinkData:(id)linkData linkColor:(UIColor *)linkColor underLineStyle:(CTUnderlineStyle)underLineStyle range:(NSRange )range;
+- (void)addLinkWithLinkData:(id)linkData 
+				  linkColor:(UIColor *)linkColor
+			 underLineStyle:(CTUnderlineStyle)underLineStyle
+					  range:(NSRange )range;
 
 /**
  *  追加 链接LinkTextStorage
  */
-- (void)appendLinkWithText:(NSString *)linkText linkFont:(UIFont *)linkFont linkData:(id)linkData;
+- (void)appendLinkWithText:(NSString *)linkText 
+				  linkFont:(UIFont *)linkFont 
+				  linkData:(id)linkData;
 
 /**
  *  追加 链接LinkTextStorage
  */
-- (void)appendLinkWithText:(NSString *)linkText linkFont:(UIFont *)linkFont linkColor:(UIColor *)linkColor linkData:(id)linkData;
+- (void)appendLinkWithText:(NSString *)linkText 
+				  linkFont:(UIFont *)linkFont 
+				 linkColor:(UIColor *)linkColor 
+				  linkData:(id)linkData;
 
 /**
  *  追加 链接LinkTextStorage
@@ -158,9 +170,14 @@
  *  @param linkData         链接携带的数据
  *  @param underLineStyle   下划线样式（无，单 双) 默认单
  */
-- (void)appendLinkWithText:(NSString *)linkText linkFont:(UIFont *)linkFont linkColor:(UIColor *)linkColor underLineStyle:(CTUnderlineStyle)underLineStyle linkData:(id)linkData;
+- (void)appendLinkWithText:(NSString *)linkText 
+				  linkFont:(UIFont *)linkFont 
+				 linkColor:(UIColor *)linkColor 
+			underLineStyle:(CTUnderlineStyle)underLineStyle 
+				  linkData:(id)linkData;
 
 @end
+
 
 #pragma mark - 扩展支持UIImage
 @interface TYTextContainer (UIImage)
@@ -262,6 +279,7 @@
 
 @end
 
+
 #pragma mark - 扩展支持UIView
 @interface TYTextContainer (UIView)
 
@@ -295,5 +313,6 @@
 - (void)appendView:(UIView *)view alignment:(TYDrawAlignment)alignment;
 
 @end
+
 
 

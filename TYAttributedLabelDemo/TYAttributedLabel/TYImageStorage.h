@@ -8,6 +8,7 @@
 
 #import "TYDrawStorage.h"
 
+/// 图片对齐方式
 typedef enum : NSUInteger {
     TYImageAlignmentCenter,  // 图片居中
     TYImageAlignmentLeft,    // 图片左对齐
@@ -15,17 +16,20 @@ typedef enum : NSUInteger {
     TYImageAlignmentFill     // 图片拉伸填充
 } TYImageAlignment;
 
+
 @interface TYImageStorage : TYDrawStorage<TYViewStorageProtocol>
 
+/// 图片
 @property (nonatomic, strong) UIImage   *image;
-
+/// 图片名称
 @property (nonatomic, strong) NSString  *imageName;
-
+/// 图片URL
 @property (nonatomic, strong) NSURL     *imageURL;
-
+/// 图片站位图
 @property (nonatomic, strong) NSString  *placeholdImageName;
+/// 图片对其方式 默认居中
+@property (nonatomic, assign) TYImageAlignment imageAlignment;
+/// 是否缓存图片 默认不缓存
+@property (nonatomic, assign) BOOL cacheImageOnMemory;
 
-@property (nonatomic, assign) TYImageAlignment imageAlignment; // default center
-
-@property (nonatomic, assign) BOOL cacheImageOnMemory; // default NO ,if YES can improve performance，but increase memory
 @end
