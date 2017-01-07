@@ -141,7 +141,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 
 #pragma mark - drawRect
 - (void)drawRect:(CGRect)rect {
-	
+
 	/// 资源判断
     if (_textContainer == nil ||  _textContainer.attString == nil) {
         return;
@@ -169,7 +169,8 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
     CGContextTranslateCTM(context, 0, contextHeight + verticalOffset);
     CGContextScaleCTM(context, 1.0, -1.0);
-    
+	
+	/// 绘制高亮区域
     if (_highlightedLinkBackgroundColor && [_textContainer existLinkRectDictionary]) {
         [self drawSelectionAreaFrame:_textContainer.frameRef InRange:_clickLinkRange radius:_highlightedLinkBackgroundRadius bgColor:_highlightedLinkBackgroundColor];
     }
@@ -186,8 +187,8 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
             frame:(CTFrameRef)frame
             rect: (CGRect)rect
          context: (CGContextRef)context {
-    if (_textContainer.numberOfLines > 0)
-    {
+	
+    if (_textContainer.numberOfLines > 0) {
         CFArrayRef lines = CTFrameGetLines(frame);
         NSInteger numberOfLines = MIN(_textContainer.numberOfLines, CFArrayGetCount(lines));
         
@@ -352,9 +353,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 }
 
 #pragma mark - touches action
-
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     __block BOOL found = NO;
     if ([_textContainer existLinkRectDictionary]) {
         UITouch *touch = [touches anyObject];
@@ -373,8 +372,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
     }
 }
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesMoved:touches withEvent:event];
     if (![_textContainer existLinkRectDictionary]) {
         return;
@@ -406,16 +404,14 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
     }
 }
 
-- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesCancelled:touches withEvent:event];
     if ([_textContainer existLinkRectDictionary] && _clickLinkRange.length > 0) {
         [self resetHighLightLink];
     }
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesEnded:touches withEvent:event];
     if ([_textContainer existLinkRectDictionary] && _clickLinkRange.length > 0) {
         [self resetHighLightLink];
@@ -423,8 +419,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 }
 
 // 设置高亮链接
-- (void)setHighlightLinkWithSaveLinkColor:(UIColor *)saveLinkColor linkRange:(NSRange)linkRange
-{
+- (void)setHighlightLinkWithSaveLinkColor:(UIColor *)saveLinkColor linkRange:(NSRange)linkRange {
     if (NSMaxRange(linkRange) > _textContainer.attString.length) {
         _clickLinkRange.length = 0;
         return;

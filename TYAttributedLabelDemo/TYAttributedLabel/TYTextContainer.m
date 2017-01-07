@@ -42,12 +42,12 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 }
 
 @interface TYTextContainer()
-@property (nonatomic, strong) NSMutableArray    *textStorageArray;  // run数组
-@property (nonatomic, strong) NSArray *textStorages; // run array copy
+@property (nonatomic, strong) NSMutableArray    *textStorageArray;  // run 数组
+@property (nonatomic, strong) NSArray			*textStorages;		// run array copy
 
 @property (nonatomic, strong) NSDictionary  *drawRectDictionary;
-@property (nonatomic, strong) NSDictionary  *runRectDictionary;  // runRect字典
-@property (nonatomic, strong) NSDictionary  *linkRectDictionary; // linkRect字典
+@property (nonatomic, strong) NSDictionary  *runRectDictionary;		// runRect字典
+@property (nonatomic, strong) NSDictionary  *linkRectDictionary;	// linkRect字典
 
 @property (nonatomic, assign) NSInteger         replaceStringNum;   // 图片替换字符数
 @property (nonatomic, strong) NSMutableAttributedString *attString;
@@ -67,21 +67,18 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 }
 
 #pragma mark - getter
-
-- (NSMutableArray *)textStorageArray
-{
+- (NSMutableArray *)textStorageArray {
     if (_textStorageArray == nil) {
         _textStorageArray = [NSMutableArray array];
     }
     return _textStorageArray;
 }
-
+/// 获取文本内容
 - (NSString *)text{
     return _attString.string;
 }
 
-- (NSAttributedString *)attributedText
-{
+- (NSAttributedString *)attributedText {
     return [_attString copy];
 }
 
@@ -93,20 +90,19 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     return [_attString copy];
 }
 
-#pragma mark - setter
-- (void)setupProperty
-{
+#pragma mark - Reset
+/// 初始化
+- (void)setupProperty {
     _font = [UIFont systemFontOfSize:15];
-    _characterSpacing = 1;
-    _linesSpacing = 2;
-    _paragraphSpacing = 0;
-    _textAlignment = kCTLeftTextAlignment;
-    _lineBreakMode = kCTLineBreakByCharWrapping;
-    _textColor = kTextColor;
-    _linkColor = kLinkColor;
-    _replaceStringNum = 0;
+    _characterSpacing	= 1;								// 字间距
+    _linesSpacing		= 2;								// 行间距
+    _paragraphSpacing	= 0;								// 段落间距
+    _textAlignment		= kCTLeftTextAlignment;				// 对齐方式
+    _lineBreakMode		= kCTLineBreakByCharWrapping;		// 换行模式
+    _textColor			= kTextColor;						// 文本颜色
+    _linkColor			= kLinkColor;						// 链接颜色
+    _replaceStringNum	= 0;								// 图片替换字符数
 }
-
 /// 重置属性
 - (void)resetAllAttributed {
 	
@@ -115,15 +111,13 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     _textStorages		= nil;
     _replaceStringNum	= 0;
 }
-
 ///
 - (void)resetRectDictionary {
     _drawRectDictionary = nil;
     _linkRectDictionary = nil;
     _runRectDictionary  = nil;
 }
-
-///
+/// 重置 FrameRef
 - (void)resetFrameRef {
     if (_frameRef) {
         CFRelease(_frameRef);
@@ -132,16 +126,19 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     _textHeight = 0;
 }
 
-///
+#pragma mark - setter
+/// 设置文本内容
 - (void)setText:(NSString *)text {
-	///
+	/// 创建属性字符串
     _attString = [self createTextAttibuteStringWithText:text];
+	/// 重置属性
     [self resetAllAttributed];
+	/// 重置 FrameRef
     [self resetFrameRef];
 }
-
-- (void)setAttributedText:(NSAttributedString *)attributedText
-{
+/// 设置属性字符串
+- (void)setAttributedText:(NSAttributedString *)attributedText {
+	
     if (attributedText == nil) {
         _attString = [[NSMutableAttributedString alloc]init];
     }else if ([attributedText isKindOfClass:[NSMutableAttributedString class]]) {
@@ -152,47 +149,40 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     [self resetAllAttributed];
     [self resetFrameRef];
 }
-
-- (void)setTextColor:(UIColor *)textColor
-{
+/// 设置文本颜色
+- (void)setTextColor:(UIColor *)textColor {
     if (textColor && _textColor != textColor){
         _textColor = textColor;
-        
         [_attString addAttributeTextColor:textColor];
         [self resetFrameRef];
     }
 }
-
-- (void)setFont:(UIFont *)font
-{
+/// 设置字体
+- (void)setFont:(UIFont *)font {
     if (font && _font != font){
         _font = font;
-        
         [_attString addAttributeFont:font];
         [self resetFrameRef];
     }
 }
-
-- (void)setStrokeWidth:(unichar)strokeWidth
-{
+/// 空心字边框宽
+- (void)setStrokeWidth:(unichar)strokeWidth {
     if (_strokeWidth != strokeWidth) {
         _strokeWidth = strokeWidth;
         [_attString addAttributeStrokeWidth:strokeWidth strokeColor:_strokeColor];
         [self resetFrameRef];
     }
 }
-
-- (void)setStrokeColor:(UIColor *)strokeColor
-{
+/// 空心颜色
+- (void)setStrokeColor:(UIColor *)strokeColor {
     if (strokeColor && _strokeColor != strokeColor) {
         _strokeColor = strokeColor;
         [_attString addAttributeStrokeWidth:_strokeWidth strokeColor:strokeColor];
         [self resetFrameRef];
     }
 }
-
-- (void)setCharacterSpacing:(unichar)characterSpacing
-{
+/// 文字间距
+- (void)setCharacterSpacing:(unichar)characterSpacing {
     if (_characterSpacing != characterSpacing) {
         _characterSpacing = characterSpacing;
         
@@ -200,9 +190,8 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
         [self resetFrameRef];
     }
 }
-
-- (void)setLinesSpacing:(CGFloat)linesSpacing
-{
+/// 行间距
+- (void)setLinesSpacing:(CGFloat)linesSpacing {
     if (_linesSpacing != linesSpacing) {
         _linesSpacing = linesSpacing;
         
@@ -210,18 +199,16 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
         [self resetFrameRef];
     }
 }
-
-- (void)setParagraphSpacing:(CGFloat)paragraphSpacing
-{
+/// 段落间距
+- (void)setParagraphSpacing:(CGFloat)paragraphSpacing {
     if (_paragraphSpacing != paragraphSpacing) {
         _paragraphSpacing = paragraphSpacing;
         [self addAttributeAlignmentStyle:_textAlignment lineSpaceStyle:_linesSpacing paragraphSpaceStyle:_paragraphSpacing lineBreakStyle:_lineBreakMode];
         [self resetFrameRef];
     }
 }
-
-- (void)setTextAlignment:(CTTextAlignment)textAlignment
-{
+/// 段落对其方式
+- (void)setTextAlignment:(CTTextAlignment)textAlignment {
     if (_textAlignment != textAlignment) {
         _textAlignment = textAlignment;
         
@@ -229,9 +216,8 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
         [self resetFrameRef];
     }
 }
-
-- (void)setLineBreakMode:(CTLineBreakMode)lineBreakMode
-{
+/// 段落换行模式
+- (void)setLineBreakMode:(CTLineBreakMode)lineBreakMode {
     if (_lineBreakMode != lineBreakMode) {
         _lineBreakMode = lineBreakMode;
         
@@ -306,6 +292,7 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 #pragma mark -  add text storage atrributed
 ///
 - (void)addTextStoragesWithAtrributedString:(NSMutableAttributedString *)attString {
+	
     if (attString && _textStorageArray.count > 0) {
         
         // 排序range
@@ -346,9 +333,9 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
         [_textStorageArray removeAllObjects];
     }
 }
-
-- (void)sortTextStorageArray:(NSMutableArray *)textStorageArray
-{
+///
+- (void)sortTextStorageArray:(NSMutableArray *)textStorageArray {
+	
     [textStorageArray sortUsingComparator:^NSComparisonResult(id<TYTextStorageProtocol> obj1, id<TYTextStorageProtocol> obj2) {
         if (obj1.range.location < obj2.range.location) {
             return NSOrderedAscending;
@@ -359,9 +346,8 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
         }
     }];
 }
-
-- (void)saveTextStorageRectWithFrame:(CTFrameRef)frame
-{
+/// CTFrameRef
+- (void)saveTextStorageRectWithFrame:(CTFrameRef)frame {
     // 获取每行
     CFArrayRef lines = CTFrameGetLines(frame);
     CGPoint lineOrigins[CFArrayGetCount(lines)];
@@ -428,10 +414,8 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
         _linkRectDictionary = nil;
     }
 }
-
 // 添加响应点击rect
-- (void)addRunRectDictionary:(NSDictionary *)runRectDictionary
-{
+- (void)addRunRectDictionary:(NSDictionary *)runRectDictionary {
     if (runRectDictionary.count < _runRectDictionary.count) {
         NSMutableArray *drawStorageArray = [[_runRectDictionary allValues]mutableCopy];
         // 剔除已经画出来的
@@ -527,23 +511,19 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 
 #pragma mark - enumerate runRect
 
-- (BOOL)existRunRectDictionary
-{
+- (BOOL)existRunRectDictionary {
     return _runRectDictionary.count != 0;
 }
 
-- (BOOL)existLinkRectDictionary
-{
+- (BOOL)existLinkRectDictionary {
     return _linkRectDictionary.count != 0;
 }
 
-- (BOOL)existDrawRectDictionary
-{
+- (BOOL)existDrawRectDictionary {
     return _drawRectDictionary.count != 0;
 }
 
-- (void)enumerateDrawRectDictionaryUsingBlock:(void (^)(id<TYDrawStorageProtocol> drawStorage, CGRect rect))block
-{
+- (void)enumerateDrawRectDictionaryUsingBlock:(void (^)(id<TYDrawStorageProtocol> drawStorage, CGRect rect))block {
     [_drawRectDictionary enumerateKeysAndObjectsUsingBlock:^(NSValue *rectValue, id<TYDrawStorageProtocol> drawStorage, BOOL * stop) {
         if (block) {
             block(drawStorage,[rectValue CGRectValue]);
@@ -551,18 +531,22 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     }];
 }
 
-- (BOOL)enumerateRunRectContainPoint:(CGPoint)point viewHeight:(CGFloat)viewHeight successBlock:(void (^)(id<TYTextStorageProtocol> textStorage))successBlock
-{
+- (BOOL)enumerateRunRectContainPoint:(CGPoint)point 
+						  viewHeight:(CGFloat)viewHeight 
+						successBlock:(void (^)(id<TYTextStorageProtocol> textStorage))successBlock {
     return [self enumerateRunRect:_runRectDictionary ContainPoint:point viewHeight:viewHeight successBlock:successBlock];
 }
 
-- (BOOL)enumerateLinkRectContainPoint:(CGPoint)point viewHeight:(CGFloat)viewHeight successBlock:(void (^)(id<TYLinkStorageProtocol> textStorage))successBlock
-{
+- (BOOL)enumerateLinkRectContainPoint:(CGPoint)point 
+						   viewHeight:(CGFloat)viewHeight 
+						 successBlock:(void (^)(id<TYLinkStorageProtocol> textStorage))successBlock {
     return [self enumerateRunRect:_linkRectDictionary ContainPoint:point viewHeight:viewHeight successBlock:successBlock];
 }
 
-- (BOOL)enumerateRunRect:(NSDictionary *)runRectDic ContainPoint:(CGPoint)point viewHeight:(CGFloat)viewHeight successBlock:(void (^)(id<TYTextStorageProtocol> textStorage))successBlock
-{
+- (BOOL)enumerateRunRect:(NSDictionary *)runRectDic 
+			ContainPoint:(CGPoint)point 
+			  viewHeight:(CGFloat)viewHeight 
+			successBlock:(void (^)(id<TYTextStorageProtocol> textStorage))successBlock {
     if (runRectDic.count == 0) {
         return NO;
     }
@@ -601,16 +585,14 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 #pragma mark - add textStorage
 @implementation TYTextContainer (Add)
 
-- (void)addTextStorage:(id<TYTextStorageProtocol>)textStorage
-{
+- (void)addTextStorage:(id<TYTextStorageProtocol>)textStorage {
     if (textStorage) {
         [self.textStorageArray addObject:textStorage];
         [self resetFrameRef];
     }
 }
 
-- (void)addTextStorageArray:(NSArray *)textStorageArray
-{
+- (void)addTextStorageArray:(NSArray *)textStorageArray {
     if (textStorageArray) {
         for (id<TYTextStorageProtocol> textStorage in textStorageArray) {
             if ([textStorage conformsToProtocol:@protocol(TYTextStorageProtocol)]) {
@@ -619,20 +601,19 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
         }
     }
 }
+
 @end
 
 #pragma mark - append textStorage
 @implementation TYTextContainer (Append)
 
-- (void)appendText:(NSString *)text
-{
+- (void)appendText:(NSString *)text {
     NSAttributedString *attributedText = [self createTextAttibuteStringWithText:text];
     [self appendTextAttributedString:attributedText];
     [self resetFrameRef];
 }
 
-- (void)appendTextAttributedString:(NSAttributedString *)attributedText
-{
+- (void)appendTextAttributedString:(NSAttributedString *)attributedText {
     if (attributedText == nil) {
         return;
     }
@@ -648,8 +629,7 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     [self resetFrameRef];
 }
 
-- (void)appendTextStorage:(id<TYAppendTextStorageProtocol>)textStorage
-{
+- (void)appendTextStorage:(id<TYAppendTextStorageProtocol>)textStorage {
     if (textStorage) {
         if ([textStorage conformsToProtocol:@protocol(TYDrawStorageProtocol)]) {
             [(id<TYDrawStorageProtocol>)textStorage setTextfontAscent:_font.ascender descent:_font.descender];
@@ -666,8 +646,7 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     }
 }
 
-- (void)appendTextStorageArray:(NSArray *)textStorageArray
-{
+- (void)appendTextStorageArray:(NSArray *)textStorageArray {
     if (textStorageArray) {
         for (id<TYAppendTextStorageProtocol> textStorage in textStorageArray) {
             if ([textStorage conformsToProtocol:@protocol(TYAppendTextStorageProtocol)]) {
@@ -678,3 +657,7 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 }
 
 @end
+
+
+
+
