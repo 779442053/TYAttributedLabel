@@ -637,57 +637,47 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 
 #pragma mark - getter
 
-- (NSString *)text{
+- (NSString *)text {
     return _textContainer.text;
 }
 
-- (NSAttributedString *)attributedText
-{
+- (NSAttributedString *)attributedText {
     return _textContainer.attributedText;
 }
 
-- (NSInteger)numberOfLines
-{
+- (NSInteger)numberOfLines {
     return _textContainer.numberOfLines;
 }
 
-- (UIColor *)textColor
-{
+- (UIColor *)textColor {
     return _textContainer.textColor;
 }
 
-- (UIFont *)font
-{
+- (UIFont *)font {
     return _textContainer.font;
 }
 
-- (UIColor *)strokeColor
-{
+- (UIColor *)strokeColor {
     return _textContainer.strokeColor;
 }
 
-- (unichar)strokeWidth
-{
+- (unichar)strokeWidth {
     return _textContainer.strokeWidth;
 }
 
-- (unichar)characterSpacing
-{
+- (unichar)characterSpacing {
     return _textContainer.characterSpacing;
 }
 
-- (CGFloat)linesSpacing
-{
+- (CGFloat)linesSpacing {
     return _textContainer.linesSpacing;
 }
 
-- (CGFloat)paragraphSpacing
-{
+- (CGFloat)paragraphSpacing {
     return _textContainer.paragraphSpacing;
 }
 
-- (CTLineBreakMode)lineBreakMode
-{
+- (CTLineBreakMode)lineBreakMode {
     return _textContainer.lineBreakMode;
 }
 
@@ -842,13 +832,11 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 @implementation TYAttributedLabel (Link)
 
 #pragma mark - addLink
-- (void)addLinkWithLinkData:(id)linkData range:(NSRange)range
-{
+- (void)addLinkWithLinkData:(id)linkData range:(NSRange)range {
     [self addLinkWithLinkData:linkData linkColor:nil range:range];
 }
 
-- (void)addLinkWithLinkData:(id)linkData linkColor:(UIColor *)linkColor range:(NSRange )range;
-{
+- (void)addLinkWithLinkData:(id)linkData linkColor:(UIColor *)linkColor range:(NSRange )range; {
     [self addLinkWithLinkData:linkData linkColor:linkColor underLineStyle:kCTUnderlineStyleSingle range:range];
 }
 
