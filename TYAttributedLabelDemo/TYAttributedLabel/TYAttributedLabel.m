@@ -167,16 +167,23 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
     //	跟很多底层 API 一样，Core Text 使用 Y翻转坐标系统，而且内容的呈现也是上下翻转的，所以需要通过转换内容将其翻转
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetTextMatrix(context, CGAffineTransformIdentity);
+	
     CGContextTranslateCTM(context, 0, contextHeight + verticalOffset);
     CGContextScaleCTM(context, 1.0, -1.0);
 	
 	/// 绘制高亮区域
     if (_highlightedLinkBackgroundColor && [_textContainer existLinkRectDictionary]) {
-        [self drawSelectionAreaFrame:_textContainer.frameRef InRange:_clickLinkRange radius:_highlightedLinkBackgroundRadius bgColor:_highlightedLinkBackgroundColor];
+        [self drawSelectionAreaFrame:_textContainer.frameRef
+							 InRange:_clickLinkRange 
+							  radius:_highlightedLinkBackgroundRadius 
+							 bgColor:_highlightedLinkBackgroundColor];
     }
     
     // CTFrameDraw 将 frame 描述到设备上下文
-    [self drawText:_textContainer.attString frame:_textContainer.frameRef rect:rect context:context];
+    [self drawText:_textContainer.attString 
+			 frame:_textContainer.frameRef 
+			  rect:rect 
+		   context:context];
     
     // 画其他元素
     [self drawTextStorage];
@@ -197,8 +204,8 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
         
         BOOL truncateLastLine = (_textContainer.lineBreakMode == kCTLineBreakByTruncatingTail);
         
-        for (CFIndex lineIndex = 0; lineIndex < numberOfLines; lineIndex++)
-        {
+        for (CFIndex lineIndex = 0; lineIndex < numberOfLines; lineIndex++) {
+
             CGPoint lineOrigin = lineOrigins[lineIndex];
             CGContextSetTextPosition(context, lineOrigin.x, lineOrigin.y);
             CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
@@ -248,8 +255,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
             }
         }
     }
-    else
-    {
+    else {
         CTFrameDraw(frame,context);
     }
 }

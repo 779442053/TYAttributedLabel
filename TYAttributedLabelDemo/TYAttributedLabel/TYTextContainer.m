@@ -11,9 +11,21 @@
 #define kTextColor       [UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1]
 #define kLinkColor       [UIColor colorWithRed:0/255.0 green:91/255.0 blue:255/255.0 alpha:1]
 
-// this code quote TTTAttributedLabel
-static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstraints(CTFramesetterRef framesetter, NSAttributedString *attributedString, CGSize size, NSUInteger numberOfLines) {
-	
+/**
+ 获取建议Size
+
+ @param framesetter framesetter
+ @param attributedString 属性字符串
+ @param size 固定宽度的Size
+ @param numberOfLines 可现实行数
+ @return 返回尺寸
+ */
+static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstraints(
+													CTFramesetterRef framesetter, 
+													NSAttributedString *attributedString,
+													CGSize size,
+													NSUInteger numberOfLines) {
+
     CFRange rangeToSize = CFRangeMake(0, (CFIndex)[attributedString length]);
     CGSize constraints = CGSizeMake(size.width, MAXFLOAT);
     
@@ -358,7 +370,7 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     
     NSInteger numberOfLines = _numberOfLines > 0 ? MIN(_numberOfLines, CFArrayGetCount(lines)) : CFArrayGetCount(lines);
     
-    NSMutableDictionary *runRectDictionary = [NSMutableDictionary dictionary];
+    NSMutableDictionary *runRectDictionary  = [NSMutableDictionary dictionary];
     NSMutableDictionary *linkRectDictionary = [NSMutableDictionary dictionary];
     NSMutableDictionary *drawRectDictionary = [NSMutableDictionary dictionary];
     // 获取每行有多少run
@@ -389,9 +401,11 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
                 CGRect runRect = CGRectMake(lineOrigin.x + CTLineGetOffsetForStringIndex(line, CTRunGetStringRange(run).location, NULL), lineOrigin.y - runDescent, runWidth, runAscent + runDescent);
                 
                 if ([textStorage conformsToProtocol:@protocol(TYDrawStorageProtocol)]) {
-                    [drawRectDictionary setObject:textStorage forKey:[NSValue valueWithCGRect:runRect]];
+                    [drawRectDictionary setObject:textStorage
+										   forKey:[NSValue valueWithCGRect:runRect]];
                 } else if ([textStorage conformsToProtocol:@protocol(TYLinkStorageProtocol)]) {
-                    [linkRectDictionary setObject:textStorage forKey:[NSValue valueWithCGRect:runRect]];
+                    [linkRectDictionary setObject:textStorage
+										   forKey:[NSValue valueWithCGRect:runRect]];
                 }
                 
                 [runRectDictionary setObject:textStorage forKey:[NSValue valueWithCGRect:runRect]];
@@ -447,7 +461,8 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     // 是否需要更新frame
     if (framesetter == nil) {
         
-        framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)[self createAttributedString]);
+        framesetter = CTFramesetterCreateWithAttributedString(
+							(CFAttributedStringRef)[self createAttributedString]);
     }else {
         CFRetain(framesetter);
     }
@@ -465,13 +480,19 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
 }
 
 /// 创建CTFrameRef
-- (CTFrameRef)createFrameRefWithFramesetter:(CTFramesetterRef)framesetter textSize:(CGSize)textSize {
+- (CTFrameRef)createFrameRefWithFramesetter:(CTFramesetterRef)framesetter
+								   textSize:(CGSize)textSize {
+
     // 这里你需要创建一个用于绘制文本的路径区域,通过 self.bounds 使用整个视图矩形区域创建 CGPath 引用。
-    CGMutablePathRef path = CGPathCreateMutable();
-    CGFloat textHeight = [self getHeightWithFramesetter:framesetter width:textSize.width];
+    CGMutablePathRef path	= CGPathCreateMutable();
+    CGFloat textHeight		= [self getHeightWithFramesetter:framesetter width:textSize.width];
+
     CGPathAddRect(path, NULL, CGRectMake(0, 0, textSize.width, MAX(textHeight, textSize.height)));
     
-    CTFrameRef frameRef = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, [_attString length]), path, NULL);
+    CTFrameRef frameRef = CTFramesetterCreateFrame(framesetter, 
+												   CFRangeMake(0, [_attString length]), 
+												   path, 
+												   NULL);
     CFRelease(path);
     return frameRef;
 }
@@ -489,10 +510,13 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     }
     
     // 创建CTFramesetter
-    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)[self createAttributedString]);
+	NSAttributedString *sString = [self createAttributedString];
+    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString(
+											(CFAttributedStringRef)sString);
     
     // 获得建议的size
-    CGSize size = [self getSuggestedSizeWithFramesetter:framesetter width:contentSize.width];
+    CGSize size = [self getSuggestedSizeWithFramesetter:framesetter
+												  width:contentSize.width];
     _textWidth  = size.width;
     _textHeight = size.height;
     
