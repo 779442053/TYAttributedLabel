@@ -312,6 +312,3 @@
 - (void)appendView:(UIView *)view alignment:(TYDrawAlignment)alignment;
 
 @end
-
-
-

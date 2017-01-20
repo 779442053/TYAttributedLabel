@@ -39,8 +39,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 
 @end
 
-@interface TYAttributedLabel ()<UIGestureRecognizerDelegate>
-{
+@interface TYAttributedLabel ()<UIGestureRecognizerDelegate> {
     struct {
         unsigned int textStorageClickedAtPoint :1;
         unsigned int textStorageLongPressedOnStateAtPoint :1;
@@ -113,6 +112,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 }
 
 #pragma mark - add textStorage
+///
 - (void)addTextStorage:(id<TYTextStorageProtocol>)textStorage {
     [_textContainer addTextStorage:textStorage];
     [self invalidateIntrinsicContentSize];
@@ -125,7 +125,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
         [self setNeedsDisplay];
     }
 }
-
+/// 重置属性
 - (void)resetAllAttributed {
     [self.subviews makeObjectsPerformSelector:@selector(removeFromSuperview)];
     [self removeSingleTapGesture];
@@ -140,6 +140,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 }
 
 #pragma mark - drawRect
+/// view 绘制方法
 - (void)drawRect:(CGRect)rect {
 
 	/// 资源判断
@@ -173,6 +174,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 	
 	/// 绘制高亮区域
     if (_highlightedLinkBackgroundColor && [_textContainer existLinkRectDictionary]) {
+		
         [self drawSelectionAreaFrame:_textContainer.frameRef
 							 InRange:_clickLinkRange 
 							  radius:_highlightedLinkBackgroundRadius 
@@ -190,33 +192,43 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 }
 
 // this code quote M80AttributedLabel
+/// 绘制文本  根据 numberOfLines 适当的截取字符串并拼接 '...'
 - (void)drawText: (NSAttributedString *)attributedString
             frame:(CTFrameRef)frame
             rect: (CGRect)rect
          context: (CGContextRef)context {
 	
+	/// 行数 > 0 时
     if (_textContainer.numberOfLines > 0) {
+		
+		/// 获取 CTLine CFArrayRef
         CFArrayRef lines = CTFrameGetLines(frame);
+		/// 获取要显示行
         NSInteger numberOfLines = MIN(_textContainer.numberOfLines, CFArrayGetCount(lines));
-        
+        /// 获取每行显示点
         CGPoint lineOrigins[numberOfLines];
         CTFrameGetLineOrigins(frame, CFRangeMake(0, numberOfLines), lineOrigins);
-        
+		
+		/// 截除后面部份,只保留前面一行的数据,后部份以...代替
         BOOL truncateLastLine = (_textContainer.lineBreakMode == kCTLineBreakByTruncatingTail);
-        
+		
+		/// 遍历行
         for (CFIndex lineIndex = 0; lineIndex < numberOfLines; lineIndex++) {
 
+			/// 获取点
             CGPoint lineOrigin = lineOrigins[lineIndex];
+			/// 设置绘制点
             CGContextSetTextPosition(context, lineOrigin.x, lineOrigin.y);
+			/// 获取 CTLineRef
             CTLineRef line = CFArrayGetValueAtIndex(lines, lineIndex);
             
             BOOL shouldDrawLine = YES;
-            if (lineIndex == numberOfLines - 1 && truncateLastLine)
-            {
+			/// 如果是最后一行 需要删减
+            if (lineIndex == numberOfLines - 1 && truncateLastLine) {
                 // Does the last line need truncation?
                 CFRange lastLineRange = CTLineGetStringRange(line);
-                if (lastLineRange.location + lastLineRange.length < attributedString.length)
-                {
+                if (lastLineRange.location + lastLineRange.length < attributedString.length) {
+
                     CTLineTruncationType truncationType = kCTLineTruncationEnd;
                     NSUInteger truncationAttributePosition = lastLineRange.location + lastLineRange.length - 1;
                     
@@ -226,8 +238,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
                     
                     NSMutableAttributedString *truncationString = [[attributedString attributedSubstringFromRange:NSMakeRange(lastLineRange.location, lastLineRange.length)] mutableCopy];
                     
-                    if (lastLineRange.length > 0)
-                    {
+                    if (lastLineRange.length > 0) {
                         // Remove last token
                         [truncationString deleteCharactersInRange:NSMakeRange(lastLineRange.length - 1, 1)];
                     }
@@ -235,10 +246,8 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
                     
                     
                     CTLineRef truncationLine = CTLineCreateWithAttributedString((CFAttributedStringRef)truncationString);
-                    CTLineRef truncatedLine = CTLineCreateTruncatedLine(truncationLine, rect.size.width, truncationType, truncationToken);
-                    if (!truncatedLine)
-                    {
-                        // If the line is not as wide as the truncationToken, truncatedLine is NULL
+                    CTLineRef truncatedLine  = CTLineCreateTruncatedLine(truncationLine, rect.size.width, truncationType, truncationToken);
+                    if (!truncatedLine) {
                         truncatedLine = CFRetain(truncationToken);
                     }
                     CFRelease(truncationLine);
@@ -249,19 +258,20 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
                     shouldDrawLine = NO;
                 }
             }
-            if(shouldDrawLine)
-            {
+			/// 绘制 CTLine
+            if(shouldDrawLine) {
                 CTLineDraw(line, context);
             }
         }
     }
+	/// 行数 == 0
     else {
         CTFrameDraw(frame,context);
     }
 }
 
 #pragma mark - drawTextStorage
-
+/// 绘制其他
 - (void)drawTextStorage {
     // draw storage
     [_textContainer enumerateDrawRectDictionaryUsingBlock:^(id<TYDrawStorageProtocol> drawStorage, CGRect rect) {
@@ -290,8 +300,8 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 }
 
 #pragma mark - add Gesture
-- (void)addSingleTapGesture
-{
+- (void)addSingleTapGesture {
+
     if (_singleTapGuesture == nil) {
         // 单指单击
         _singleTapGuesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTap:)];
@@ -301,16 +311,14 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
     }
 }
 
-- (void)removeSingleTapGesture
-{
+- (void)removeSingleTapGesture {
     if (_singleTapGuesture) {
         [self removeGestureRecognizer:_singleTapGuesture];
         _singleTapGuesture = nil;
     }
 }
 
-- (void)addLongPressGesture
-{
+- (void)addLongPressGesture {
     if (_longPressGuesture == nil) {
         // 长按
         _longPressGuesture = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPress:)];
@@ -318,8 +326,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
     }
 }
 
-- (void)removeLongPressGesture
-{
+- (void)removeLongPressGesture {
     if (_longPressGuesture) {
         [self removeGestureRecognizer:_longPressGuesture];
         _longPressGuesture = nil;
@@ -364,6 +371,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
     [_textContainer enumerateRunRectContainPoint:point 
 									  viewHeight:CGRectGetHeight(self.frame) 
 									successBlock:^(id<TYTextStorageProtocol> textStorage){
+										
         if (_delegateFlags.textStorageLongPressedOnStateAtPoint) {
                 [weakSelf.delegate attributedLabel:weakSelf 
 							textStorageLongPressed:textStorage 
@@ -373,7 +381,7 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
     }];
 }
 
-#pragma mark - touches action
+#pragma mark - touches action 触摸事件
 ///
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     __block BOOL found = NO;
@@ -875,66 +883,53 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 
 #pragma mark addImage
 
-- (void)addImage:(UIImage *)image range:(NSRange)range size:(CGSize)size alignment:(TYDrawAlignment)alignment
-{
+- (void)addImage:(UIImage *)image range:(NSRange)range size:(CGSize)size alignment:(TYDrawAlignment)alignment {
     [_textContainer addImage:image range:range size:size alignment:alignment];
 }
 
-- (void)addImage:(UIImage *)image range:(NSRange)range size:(CGSize)size
-{
+- (void)addImage:(UIImage *)image range:(NSRange)range size:(CGSize)size {
     [self addImage:image range:range size:size alignment:TYDrawAlignmentTop];
 }
 
-- (void)addImage:(UIImage *)image range:(NSRange)range
-{
+- (void)addImage:(UIImage *)image range:(NSRange)range {
     [self addImage:image range:range size:image.size];
 }
 
-- (void)addImageWithName:(NSString *)imageName range:(NSRange)range size:(CGSize)size alignment:(TYDrawAlignment)alignment
-{
+- (void)addImageWithName:(NSString *)imageName range:(NSRange)range size:(CGSize)size alignment:(TYDrawAlignment)alignment {
     [_textContainer addImageWithName:imageName range:range size:size alignment:alignment];
 }
 
-- (void)addImageWithName:(NSString *)imageName range:(NSRange)range size:(CGSize)size
-{
+- (void)addImageWithName:(NSString *)imageName range:(NSRange)range size:(CGSize)size {
     [self addImageWithName:imageName range:range size:size alignment:TYDrawAlignmentTop];
 }
 
-- (void)addImageWithName:(NSString *)imageName range:(NSRange)range
-{
+- (void)addImageWithName:(NSString *)imageName range:(NSRange)range {
     [self addImageWithName:imageName range:range size:CGSizeMake(self.font.pointSize, self.font.ascender)];
-    
 }
 
 #pragma mark - appendImage
 
-- (void)appendImage:(UIImage *)image size:(CGSize)size alignment:(TYDrawAlignment)alignment
-{
+- (void)appendImage:(UIImage *)image size:(CGSize)size alignment:(TYDrawAlignment)alignment {
     [_textContainer appendImage:image size:size alignment:alignment];
 }
 
-- (void)appendImage:(UIImage *)image size:(CGSize)size
-{
+- (void)appendImage:(UIImage *)image size:(CGSize)size {
     [self appendImage:image size:size alignment:TYDrawAlignmentTop];
 }
 
-- (void)appendImage:(UIImage *)image
-{
+- (void)appendImage:(UIImage *)image {
     [self appendImage:image size:image.size];
 }
 
-- (void)appendImageWithName:(NSString *)imageName size:(CGSize)size alignment:(TYDrawAlignment)alignment
-{
+- (void)appendImageWithName:(NSString *)imageName size:(CGSize)size alignment:(TYDrawAlignment)alignment {
     [_textContainer appendImageWithName:imageName size:size alignment:alignment];
 }
 
-- (void)appendImageWithName:(NSString *)imageName size:(CGSize)size
-{
+- (void)appendImageWithName:(NSString *)imageName size:(CGSize)size {
     [self appendImageWithName:imageName size:size alignment:TYDrawAlignmentTop];
 }
 
-- (void)appendImageWithName:(NSString *)imageName
-{
+- (void)appendImageWithName:(NSString *)imageName {
     [self appendImageWithName:imageName size:CGSizeMake(self.font.pointSize, self.font.ascender)];
     
 }
@@ -945,25 +940,21 @@ NSString *const kTYTextRunAttributedName = @"TYTextRunAttributedName";
 
 #pragma mark - addView
 
-- (void)addView:(UIView *)view range:(NSRange)range alignment:(TYDrawAlignment)alignment
-{
+- (void)addView:(UIView *)view range:(NSRange)range alignment:(TYDrawAlignment)alignment {
     [_textContainer addView:view range:range alignment:alignment];
 }
 
-- (void)addView:(UIView *)view range:(NSRange)range
-{
+- (void)addView:(UIView *)view range:(NSRange)range {
     [self addView:view range:range alignment:TYDrawAlignmentTop];
 }
 
 #pragma mark - appendView
 
-- (void)appendView:(UIView *)view alignment:(TYDrawAlignment)alignment
-{
+- (void)appendView:(UIView *)view alignment:(TYDrawAlignment)alignment {
     [_textContainer appendView:view alignment:alignment];
 }
 
-- (void)appendView:(UIView *)view
-{
+- (void)appendView:(UIView *)view {
     [self appendView:view alignment:TYDrawAlignmentTop];
 }
 

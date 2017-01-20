@@ -28,11 +28,11 @@
 	container.font			= [UIFont systemFontOfSize:18];
 	container.textColor		= [UIColor redColor];
 	label.textContainer		= container;
-	label.backgroundColor	= [UIColor lightGrayColor];
+//	label.backgroundColor	= [UIColor lightGrayColor];
 	[self.view addSubview:label];
 	
-	[container createAttributedString];
-	NSLog(@"textStorages: %@", container.textStorages);
+//	[container createAttributedString];
+//	NSLog(@"textStorages: %@", container.textStorages);
 }
 
 - (void)demo {

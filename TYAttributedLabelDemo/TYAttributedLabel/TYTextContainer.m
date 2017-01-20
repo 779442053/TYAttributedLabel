@@ -53,6 +53,7 @@ static inline CGSize CTFramesetterSuggestFrameSizeForAttributedStringWithConstra
     return CGSizeMake(ceil(suggestedSize.width), ceil(suggestedSize.height));
 }
 
+
 @interface TYTextContainer()
 @property (nonatomic, strong) NSMutableArray    *textStorageArray;  // run 数组
 @property (nonatomic, strong) NSArray			*textStorages;		// run array copy

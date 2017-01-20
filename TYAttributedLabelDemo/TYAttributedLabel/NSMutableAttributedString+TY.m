@@ -11,39 +11,35 @@
 @implementation NSMutableAttributedString (TY)
 
 #pragma mark - 文本颜色属性
-- (void)addAttributeTextColor:(UIColor*)color
-{
+/// 设置颜色属性
+- (void)addAttributeTextColor:(UIColor*)color {
     [self addAttributeTextColor:color range:NSMakeRange(0, [self length])];
 }
-
-- (void)addAttributeTextColor:(UIColor*)color range:(NSRange)range
-{
-    if (color.CGColor)
-    {
+/// 设置颜色属性
+- (void)addAttributeTextColor:(UIColor*)color range:(NSRange)range {
+    if (color.CGColor) {
         [self removeAttribute:(NSString *)kCTForegroundColorAttributeName range:range];
         
         [self addAttribute:(NSString *)kCTForegroundColorAttributeName
                      value:(id)color.CGColor
                      range:range];
     }
-    
 }
 
 #pragma mark - 文本字体属性
-- (void)addAttributeFont:(UIFont *)font
-{
+/// 添加 字体属性
+- (void)addAttributeFont:(UIFont *)font {
     [self addAttributeFont:font range:NSMakeRange(0, [self length])];
 }
-
-- (void)addAttributeFont:(UIFont *)font range:(NSRange)range
-{
-    if (font)
-    {
+/// 添加指定分为的 字体属性
+- (void)addAttributeFont:(UIFont *)font range:(NSRange)range {
+    if (font) {
+		/// 删除文字属性
         [self removeAttribute:(NSString*)kCTFontAttributeName range:range];
-        
+        /// 创建文字属性
         CTFontRef fontRef = CTFontCreateWithName((CFStringRef)font.fontName, font.pointSize, nil);
-        if (nil != fontRef)
-        {
+        if (nil != fontRef) {
+			/// 设置文字属性
             [self addAttribute:(NSString *)kCTFontAttributeName value:(__bridge id)fontRef range:range];
             CFRelease(fontRef);
         }
@@ -51,15 +47,17 @@
 }
 
 #pragma mark - 文本字符间隔属性
-- (void)addAttributeCharacterSpacing:(unichar)characterSpacing
-{
+/// 文本字符间隔属性
+- (void)addAttributeCharacterSpacing:(unichar)characterSpacing {
     [self addAttributeCharacterSpacing:characterSpacing range:NSMakeRange(0, self.length)];
 }
 
-- (void)addAttributeCharacterSpacing:(unichar)characterSpacing range:(NSRange)range
-{
+/// 文本字符间隔属性
+- (void)addAttributeCharacterSpacing:(unichar)characterSpacing range:(NSRange)range {
+	/// 删除文字间隔
     [self removeAttribute:(id)kCTKernAttributeName range:range];
-    
+	
+	/// 设置文字间隔
     CFNumberRef num =  CFNumberCreate(kCFAllocatorDefault,kCFNumberSInt8Type,&characterSpacing);
     [self addAttribute:(id)kCTKernAttributeName value:(__bridge id)num range:range];
     CFRelease(num);
@@ -89,27 +87,30 @@
 }
 
 #pragma mark - 文本空心字及颜色
-
+/// 设置空心字 及 颜色
 - (void)addAttributeStrokeWidth:(unichar)strokeWidth
-                    strokeColor:(UIColor *)strokeColor
-{
-    [self addAttributeStrokeWidth:strokeWidth strokeColor:strokeColor range:NSMakeRange(0, self.length)];
+                    strokeColor:(UIColor *)strokeColor {
+    [self addAttributeStrokeWidth:strokeWidth 
+					  strokeColor:strokeColor 
+							range:NSMakeRange(0, self.length)];
 }
 
+/// 设置空心字 及 颜色
 - (void)addAttributeStrokeWidth:(unichar)strokeWidth
                     strokeColor:(UIColor *)strokeColor
-                          range:(NSRange)range
-{
+                          range:(NSRange)range {
+	
     [self removeAttribute:(id)kCTStrokeWidthAttributeName range:range];
     if (strokeWidth > 0) {
         CFNumberRef num = CFNumberCreate(kCFAllocatorDefault,kCFNumberSInt8Type,&strokeWidth);
-        
         [self addAttribute:(id)kCTStrokeWidthAttributeName value:(__bridge id)num range:range];
     }
     
     [self removeAttribute:(id)kCTStrokeColorAttributeName range:range];
+	
     if (strokeColor) {
-        [self addAttribute:(id)kCTStrokeColorAttributeName value:(id)strokeColor.CGColor range:range];
+        [self addAttribute:(id)kCTStrokeColorAttributeName 
+					 value:(id)strokeColor.CGColor range:range];
     }
     
 }

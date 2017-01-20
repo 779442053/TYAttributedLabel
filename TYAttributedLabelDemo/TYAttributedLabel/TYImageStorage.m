@@ -47,6 +47,7 @@
     }
 }
 
+/// 绘制
 - (void)drawStorageWithRect:(CGRect)rect {
     __block UIImage *image = nil;
     if (_image) {
@@ -78,6 +79,7 @@
     }
 }
 
+///
 - (CGRect)rectFitOriginSize:(CGSize)size byRect:(CGRect)byRect{
     if (_imageAlignment == TYImageAlignmentFill) {
         return byRect;
